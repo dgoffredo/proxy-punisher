@@ -2,19 +2,18 @@ create table Proxy(
   name text not null primary key,
   description text not null,
   git_remote_url text not null,
-  -- Python format style pattern, where {commit_sha} is the SHA1 of the git
-  -- commit.
+  -- Python format style pattern, where {commit} is the git commit.
   commit_url_pattern text not null);
 
 insert into Proxy(name, description, git_remote_url, commit_url_pattern) values
   ('envoy',
    'Envoy with the Datadog extension',
    'https://github.com/envoyproxy/envoyproxy/envoy',
-   'https://github.com/envoyproxy/envoy/commit/{commit_sha}'),
+   'https://github.com/envoyproxy/envoy/commit/{commit}'),
   ('nginx',
    'NGINX with the nginx-datadog module',
    'https://github.com/Datadog/nginx-datadog',
-   'https://github.com/Datadog/nginx-datadog/commit/{commit_sha}');
+   'https://github.com/Datadog/nginx-datadog/commit/{commit}');
 
 create table Job(
   create_iso_utc text not null,

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+port=${1:-1338}
+
+cd "$(dirname "$0")/../server"
+
+DATABASE_DIR=../database waitress-serve \
+  --listen=127.0.0.1:"$port" \
+  --call server:server

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -e
+
+cd "$(dirname "$0")/.."
+find runner/ server/ -type f -name '*.py' -print0 | xargs -0 yapf3 -i
