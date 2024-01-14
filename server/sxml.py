@@ -39,7 +39,11 @@ def html_from_sexpr(sexpr) -> str:
     element = element_from_sexpr(sexpr)
     if element is None:
         return None
-    return ET.tostring(element, encoding='unicode', method='html')
+    ET.indent(element)
+    return ET.tostring(element,
+                       encoding='unicode',
+                       method='html',
+                       short_empty_elements=False)
 
 
 def _element_from_sexpr(sexpr,

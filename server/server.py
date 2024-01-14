@@ -72,7 +72,7 @@ def render_jobs_page(jobs_cursor):
     """
     return sxml.html_from_sexpr(['html',
         ['body',
-            ['table',
+            ['table', {'border': '1'},
                 ['tr',
                     ['th', 'Created'],
                     ['th', 'Proxy'],
