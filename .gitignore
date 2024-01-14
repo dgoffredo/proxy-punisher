@@ -1,0 +1,8 @@
+# log files
+/logs/*.log
+# cloned source repositories
+/repos/*/
+# the database file
+/database/database.sqlite
+# python noise
+**/__pycache__/
