@@ -1,3 +1,29 @@
+"""server
+
+Serves the following endpoints:
+
+    GET /jobs
+        Return an HTML page containing a table of all jobs, sorted by most
+        recent first.
+
+    POST /jobs
+        Create a new job.  The request body must be a form containing the
+        following fields:
+
+        - "proxy" is the kind of proxy, i.e. either "nginx" or "envoy".
+        - "proxy_commit" is the SHA1 hash of the git commit of the proxy
+          project that the job will build and test.
+        - "tracer_commit" is the SHA1 hash of the git commit of the tracing
+          library project (i.e. dd-trace-cpp) that the job will use in the
+          build of the proxy.
+
+Requires the following environment variable:
+
+    DATABASE_DIR
+        Path to the directory containing the sqlite3 database and SQL statement
+        files.
+"""
+
 from flask import Flask, request
 import json
 import os
@@ -16,8 +42,9 @@ def link_to_log(file_name):
     return ['a', {'href': f'/logs/{file_name}'}, 'output']
 
 
-def render_runtime(seconds):
-    """TODO
+def render_runtime(seconds: float):
+    """Return a human-readable time duration of the specified number of
+    `seconds`.
     """
     seconds = int(seconds)
     if seconds < 60:
@@ -32,7 +59,8 @@ def render_runtime(seconds):
 
 
 def render_job_status(runtime_seconds, return_status):
-    """TODO
+    """Return a human-readable description of the run status of the job based
+    on the specified `runtime_seconds` and `return_status`.
     """
     if return_status is None:
         return 'Queued'
@@ -45,7 +73,8 @@ def render_job_status(runtime_seconds, return_status):
 
 
 def jobs_rows(jobs_cursor):
-    """TODO
+    """Yield HTML table rows from the specified SQL query result set
+    `jobs_cursor`.
     """
     for created, proxy, proxy_commit, proxy_commit_url_pattern, tracer_commit, begin, end, runtime, status, log in jobs_cursor:
         yield ['tr',
@@ -68,7 +97,7 @@ def jobs_rows(jobs_cursor):
 
 
 def render_jobs_page(jobs_cursor):
-    """TODO
+    """Return an HTML page containing a table of jobs based off of the specified SQL query result set `jobs_cursor`. 
     """
     return sxml.html_from_sexpr(['html',
         ['body',
