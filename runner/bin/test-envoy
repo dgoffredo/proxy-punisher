@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Required environment variables:
+#
+#     PROXY_COMMIT
+#         SHA1 hash of the git commit of envoy.
+#
+#     TRACER_COMMIT
+#         SHA1 hash of the git commit of dd-trace-cpp.
+
+set -x
+set -e
+
+# TODO

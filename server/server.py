@@ -132,6 +132,8 @@ def post_jobs():
     if tracer_commit is None:
         return f'Missing the "tracer_commit" form field.\n', 400
 
+    # TODO: Validate format of commit hashes.
+
     sql = (db_dir / 'statements' / 'create-job.sql').read_text()
     with sqlite3.connect(db_path) as db:
         db.execute('pragma foreign_keys = on;')

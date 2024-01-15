@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Required environment variables:
+#
+#     PROXY_COMMIT
+#         SHA1 hash of the git commit of nginx-datadog.
+#
+#     TRACER_COMMIT
+#         SHA1 hash of the git commit of dd-trace-cpp.
+
+set -x
+set -e
+
+cd repos/nginx-datadog
+git fetch
+git checkout "$PROXY_COMMIT"
+cd dd-trace-cpp
+git fetch
+git checkout "$TRACER_COMMIT"
+cd ../
+
+make test VERBOSE=1 TEST_ARGS='--verbose'
