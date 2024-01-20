@@ -2,21 +2,33 @@
 
 # Required environment variables:
 #
+#     PROXY_REMOTE
+#         Git remote from which nginx-datadog can be cloned.
+#
 #     PROXY_COMMIT
 #         SHA1 hash of the git commit of nginx-datadog.
 #
 #     TRACER_COMMIT
 #         SHA1 hash of the git commit of dd-trace-cpp.
+#
+# When this script is executed, the current working directory must be the
+# repository root.
 
 set -x
 set -e
 
+if ! [ -d repos/nginx-datadog ]; then
+  git clone --recurse-submodules "$PROXY_REMOTE" repos/nginx-datadog
+fi
+
 cd repos/nginx-datadog
 git fetch
+git reset --hard
 git checkout "$PROXY_COMMIT"
 cd dd-trace-cpp
 git fetch
 git checkout "$TRACER_COMMIT"
 cd ../
+mv nginx-version-info.example nginx-version-info
 
 make test VERBOSE=1 TEST_ARGS='--verbose'

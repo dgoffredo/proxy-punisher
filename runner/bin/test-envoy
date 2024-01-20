@@ -2,13 +2,38 @@
 
 # Required environment variables:
 #
+#     PROXY_REMOTE
+#         Git remote from which envoy can be cloned.
+#
 #     PROXY_COMMIT
 #         SHA1 hash of the git commit of envoy.
 #
 #     TRACER_COMMIT
 #         SHA1 hash of the git commit of dd-trace-cpp.
+#
+# When this script is executed, the current working directory must be the
+# repository root.
 
 set -x
 set -e
 
-# TODO
+if ! [ -d repos/dd-trace-cpp ]; then
+  git clone 'https://github.com/Datadog/dd-trace-cpp' repos/dd-trace-cpp
+fi
+cd repos/dd-trace-cpp
+git fetch
+git reset --hard
+git checkout "$TRACER_COMMIT"
+cd ../
+
+if ! [ -d envoy ]; then
+  git clone --recurse-submodules "$PROXY_REMOTE" envoy
+fi
+cd envoy
+git reset --hard
+git checkout "$PROXY_COMMIT"
+bazelisk test \
+  --override_repository=com_github_datadog_dd_trace_cpp=../dd-trace-cpp \
+  --verbose_failures \
+  --jobs 1 \
+  //test/extensions/tracers/datadog/...

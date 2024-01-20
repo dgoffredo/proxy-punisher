@@ -17,11 +17,14 @@ Serves the following endpoints:
           library project (i.e. dd-trace-cpp) that the job will use in the
           build of the proxy.
 
-Requires the following environment variable:
+Requires the following environment variables:
 
     DATABASE_DIR
         Path to the directory containing the sqlite3 database and SQL statement
         files.
+    
+    LOGS_DIR
+        Path to the directory containing log files.
 """
 
 from flask import Flask, request
@@ -32,8 +35,9 @@ import sqlite3
 import sxml
 
 db_dir = Path(os.environ['DATABASE_DIR'])
+logs_dir = Path(os.environ['LOGS_DIR'])
 db_path = db_dir / 'database.sqlite'
-app = Flask(__name__)
+app = Flask(__name__, static_folder=logs_dir)
 
 
 def link_to_log(file_name):
@@ -99,17 +103,19 @@ def jobs_rows(jobs_cursor):
 def render_jobs_page(jobs_cursor):
     """Return an HTML page containing a table of jobs based off of the specified SQL query result set `jobs_cursor`. 
     """
-    return sxml.html_from_sexpr(['html',
+    return sxml.html_from_sexpr(
+      ['html',
+        ['head', ['title', 'Proxy Punisher: Jobs']],
         ['body',
-            ['table', {'border': '1'},
-                ['tr',
-                    ['th', 'Created'],
-                    ['th', 'Proxy'],
-                    ['th', 'Proxy Commit'],
-                    ['th', 'Tracer Commit'],
-                    ['th', 'Status'],
-                    ['th', 'Output']],
-                *jobs_rows(jobs_cursor)]]]) # yapf: disable
+          ['table', {'border': '1'},
+            ['tr',
+              ['th', 'Created'],
+              ['th', 'Proxy'],
+              ['th', 'Proxy Commit'],
+              ['th', 'Tracer Commit'],
+              ['th', 'Status'],
+              ['th', 'Output']],
+              *jobs_rows(jobs_cursor)]]]) # yapf: disable
 
 
 @app.get('/jobs')
@@ -118,6 +124,7 @@ def get_jobs():
     with sqlite3.connect(f'file:{db_path}?mode=ro', uri=True) as db:
         db.execute('pragma foreign_keys = on;')
         return render_jobs_page(db.execute(sql))
+    # TODO: `db.close()` without screwing up transactions.
 
 
 @app.post('/jobs')
@@ -132,8 +139,6 @@ def post_jobs():
     if tracer_commit is None:
         return f'Missing the "tracer_commit" form field.\n', 400
 
-    # TODO: Validate format of commit hashes.
-
     sql = (db_dir / 'statements' / 'create-job.sql').read_text()
     with sqlite3.connect(db_path) as db:
         db.execute('pragma foreign_keys = on;')
@@ -146,6 +151,7 @@ def post_jobs():
                 })
         except sqlite3.IntegrityError as error:
             return f'{error}\n', 400
+    db.close()
     return 'ok\n'
 
 

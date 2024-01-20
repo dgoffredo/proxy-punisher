@@ -1,5 +1,5 @@
 # log files
-/logs/*.log
+/logs/*.log.txt
 # cloned source repositories
 /repos/*/
 # the database file

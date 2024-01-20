@@ -8,7 +8,7 @@ create table Proxy(
 insert into Proxy(name, description, git_remote_url, commit_url_pattern) values
   ('envoy',
    'Envoy with the Datadog extension',
-   'https://github.com/envoyproxy/envoyproxy/envoy',
+   'https://github.com/envoyproxy/envoy',
    'https://github.com/envoyproxy/envoy/commit/{commit}'),
   ('nginx',
    'NGINX with the nginx-datadog module',
