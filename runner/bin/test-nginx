@@ -29,6 +29,6 @@ cd dd-trace-cpp
 git fetch
 git checkout "$TRACER_COMMIT"
 cd ../
-mv nginx-version-info.example nginx-version-info
+cp nginx-version-info.example nginx-version-info
 
 make test VERBOSE=1 TEST_ARGS='--verbose'

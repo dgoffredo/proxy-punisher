@@ -27,17 +27,19 @@ Requires the following environment variables:
         Path to the directory containing log files.
 """
 
+import database
 from flask import Flask, request
 import json
 import os
 from pathlib import Path
 import sqlite3
-import sxml
+from . import sxml
 
 db_dir = Path(os.environ['DATABASE_DIR'])
 logs_dir = Path(os.environ['LOGS_DIR'])
 db_path = db_dir / 'database.sqlite'
 app = Flask(__name__, static_folder=logs_dir)
+print(os.getcwd(), logs_dir)
 
 
 def link_to_log(file_name):
@@ -121,10 +123,9 @@ def render_jobs_page(jobs_cursor):
 @app.get('/jobs')
 def get_jobs():
     sql = (db_dir / 'statements' / 'get-jobs.sql').read_text()
-    with sqlite3.connect(f'file:{db_path}?mode=ro', uri=True) as db:
+    with database.connect(f'file:{db_path}?mode=ro', uri=True) as db:
         db.execute('pragma foreign_keys = on;')
         return render_jobs_page(db.execute(sql))
-    # TODO: `db.close()` without screwing up transactions.
 
 
 @app.post('/jobs')
@@ -140,7 +141,7 @@ def post_jobs():
         return f'Missing the "tracer_commit" form field.\n', 400
 
     sql = (db_dir / 'statements' / 'create-job.sql').read_text()
-    with sqlite3.connect(db_path) as db:
+    with database.connect(db_path) as db:
         db.execute('pragma foreign_keys = on;')
         try:
             db.execute(
@@ -151,7 +152,6 @@ def post_jobs():
                 })
         except sqlite3.IntegrityError as error:
             return f'{error}\n', 400
-    db.close()
     return 'ok\n'
 
 

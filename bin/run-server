@@ -4,8 +4,11 @@ set -e
 
 port=${1:-1338}
 
-cd "$(dirname "$0")/../server"
+cd "$(dirname "$0")/.."
 
-DATABASE_DIR=../database LOGS_DIR=../logs waitress-serve \
+# DATABASE_DIR is relative to our working directory,
+# while LOGS_DIR is relative to the server module file's directory.
+# The sqlite3 and Flask modules do things differently.
+DATABASE_DIR=database LOGS_DIR=../logs waitress-serve \
   --listen=127.0.0.1:"$port" \
-  --call server:server
+  --call server:server.server

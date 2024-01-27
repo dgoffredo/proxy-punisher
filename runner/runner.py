@@ -16,9 +16,9 @@ Requires the following environment variables:
         "bin/" subdirectory. 
 """
 
+import database
 import os
 from pathlib import Path
-import sqlite3
 import subprocess
 import sys
 
@@ -27,7 +27,7 @@ db_path = db_dir / 'database.sqlite'
 logs_dir = Path(os.environ['LOGS_DIR'])
 bin_dir = Path(os.environ['BIN_DIR'])
 
-with sqlite3.connect(db_path) as db:
+with database.connect(db_path) as db:
     rows = list(
         db.execute((db_dir / 'statements' / 'pick-job.sql').read_text()))
     if len(rows) == 0:
@@ -43,8 +43,6 @@ with sqlite3.connect(db_path) as db:
             'tracer_commit': tracer_commit,
             'log_file_name': log_file_name
         })
-
-db.close()
 
 with open(logs_dir / log_file_name, 'w') as log:
     if proxy == 'nginx':
@@ -62,7 +60,7 @@ with open(logs_dir / log_file_name, 'w') as log:
                             stderr=log,
                             env=child_env)
 
-with sqlite3.connect(db_path) as db:
+with database.connect(db_path) as db:
     db.execute(
         (db_dir / 'statements' / 'end-job.sql').read_text(), {
             'status_code': result.returncode,
