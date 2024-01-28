@@ -70,9 +70,9 @@ def render_runtime(seconds: float):
     return f'{hours}h {minutes}m {seconds}s'
 
 
-def render_job_status(runtime_seconds, return_status):
+def render_job_status(start_time, runtime_seconds, return_status):
     """Return a human-readable description of the run status of the job based
-    on the specified `runtime_seconds` and `return_status`.
+    on the specified `start_time`, `runtime_seconds`, and `return_status`.
 
     For example:
 
@@ -82,7 +82,7 @@ def render_job_status(runtime_seconds, return_status):
       thirty-six minutes and ten seconds.
     - "Failed (5s)" -> The job failed, and took five seconds.
     """
-    if return_status is None:
+    if start_time is None:
         return 'Queued'
     if runtime_seconds is None:
         return 'Running'
@@ -111,7 +111,7 @@ def jobs_rows(jobs_cursor):
                 ['a', {'href': f'https://github.com/Datadog/dd-trace-cpp/commit/{tracer_commit}'},
                     tracer_commit[:7]]],
             # Status
-            ['td', render_job_status(runtime, status)],
+            ['td', render_job_status(begin, runtime, status)],
             # Output (log)
             ['td', link_to_log(log)]] # yapf: disable
 

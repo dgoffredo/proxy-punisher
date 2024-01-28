@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd "$(dirname "$0")/.."
+DATABASE_DIR=database LOGS_DIR=logs BIN_DIR=runner/bin python3 -m runner.runner

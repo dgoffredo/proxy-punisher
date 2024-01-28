@@ -8,4 +8,4 @@ This module has [dependencies](requirements.txt) that can be installed via
 `pip3 install -r requirements.txt`.
 
 Running the server requires certain environment variables.  See
-[server.py](server.py) and [run-server](../bin/run-server).
+[server.py](server.py) and [bin/server](../bin/server).

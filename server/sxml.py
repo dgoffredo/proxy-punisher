@@ -39,7 +39,7 @@ def html_from_sexpr(sexpr) -> str:
     element = element_from_sexpr(sexpr)
     if element is None:
         return None
-    ET.indent(element)
+    # ET.indent(element) # requires Python >= 3.9
     return ET.tostring(element,
                        encoding='unicode',
                        method='html',
