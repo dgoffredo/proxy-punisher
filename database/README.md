@@ -9,3 +9,6 @@ This directory contains a sqlite database of jobs.
 
 The database file itself (`database.sqlite`) is excluded from this repository
 by [../.gitignore](../.gitignore).
+
+If the database file does not yet exist, then it must be created before running
+the server.  See [build-database](../bin/build-database).
