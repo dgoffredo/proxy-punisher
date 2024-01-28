@@ -55,7 +55,7 @@ with open(logs_dir / log_file_name, 'w') as log:
     child_env['PROXY_REMOTE'] = proxy_git_remote_url
     child_env['PROXY_COMMIT'] = proxy_commit
     child_env['TRACER_COMMIT'] = tracer_commit
-    result = subprocess.run([str(script_path)],
+    result = subprocess.run([script_path],
                             stdout=log,
                             stderr=log,
                             env=child_env)
