@@ -51,6 +51,12 @@ def link_to_log(file_name):
 def render_runtime(seconds: float):
     """Return a human-readable time duration of the specified number of
     `seconds`.
+
+    For example:
+
+    - 34 -> "34s" for thirty-four seconds.
+    - 603 -> "10m 3s" for ten minutes and three seconds.
+    - 7919 -> "2h 11m 59s" for two hours, eleven minutes, and fifty-nine seconds.
     """
     seconds = int(seconds)
     if seconds < 60:
@@ -67,6 +73,14 @@ def render_runtime(seconds: float):
 def render_job_status(runtime_seconds, return_status):
     """Return a human-readable description of the run status of the job based
     on the specified `runtime_seconds` and `return_status`.
+
+    For example:
+
+    - "Queued" -> The job has not started.
+    - "Running" -> The job has started, but has not finished.
+    - "Completed (36m 10s)" -> The job completed successfully, and took
+      thirty-six minutes and ten seconds.
+    - "Failed (5s)" -> The job failed, and took five seconds.
     """
     if return_status is None:
         return 'Queued'
